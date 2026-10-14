@@ -4,29 +4,48 @@ import { AuthState } from "@/lib/types";
 import { Center, Spinner, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-export const AuthContext = createContext<User | null>(null);
+type authContextValue = {
+  user : User,
+  refreshUser : () => Promise<void>
+}
+const AuthContext = createContext<authContextValue | null>(null);
 
 export function useUser() {
-  const user = useContext(AuthContext);
-  if (!user) {
-    throw new Error("useUser must be inside");
+  const userContext = useContext(AuthContext);
+  if (!userContext) {
+    throw new Error("useUser must be used inside <AuthProvider>");
   }
 
-  return user;
+  return userContext.user;
 }
+
+export function useRefreshUser() {
+  const userContext = useContext(AuthContext);
+  if (!userContext) {
+    throw new Error("useRefreshUserUser must be used inside <AuthProvider>");
+  }
+
+  return userContext.refreshUser;
+}
+
+
 
 export default function AuthProvider(props: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({ status: "loading" });
   const router = useRouter();
   const { children } = props;
 
+  const refreshUser = useCallback(async () => {
+    const user = await me();
+    setState({ status: "authenticated", user: user });
+  },[])
+
   useEffect(() => {
     async function getMe() {
       try {
-        const user = await me();
-        setState({ status: "authenticated", user: user });
+       await refreshUser()
       } catch (error) {
         if (error instanceof ApiError && error.status === 403) {
           router.replace("/login");
@@ -40,7 +59,7 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
     }
 
     getMe();
-  }, [router]);
+  }, [router,refreshUser]);
 
   if (state.status === "loading") {
     return (
@@ -55,6 +74,6 @@ export default function AuthProvider(props: { children: React.ReactNode }) {
       </Center>
     );
   } else {
-    return <AuthContext value={state.user}>{children}</AuthContext>;
+    return <AuthContext value={{user : state.user, refreshUser}}>{children}</AuthContext>;
   }
 }

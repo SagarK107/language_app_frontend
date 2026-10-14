@@ -5,7 +5,27 @@ export type User = {
     username : string,
     id : number
     email : string
+    active_course : number | null
 }
+
+export type Course =  {
+  id : number,
+  title : string,
+  source_language : string,
+  target_language : string
+}
+
+export type LessonSummary = {
+  id : number,
+  order : number,
+  title : string
+}
+
+export type CourseDetail = Course &  {
+ 
+  lessons : LessonSummary[]
+}
+
 export type FieldErrors = Record<string, string[]>;
 
 // Thrown for any non-2xx reply, so callers can read the status and the body.
@@ -82,4 +102,23 @@ export function me() {
         method : "GET",
 
     })
+}
+
+export function getCourses() {
+  return apiFetch<Course[]>("/api/courses/", {
+    method : "GET",
+  })
+}
+
+export function getCourse(id : number) {
+  return apiFetch<CourseDetail>(`/api/courses/${id}/`, {
+    method : "GET",
+  })
+}
+
+export function setActiveCourse(id : number) {
+  return apiFetch<{course : number}>(`/api/active-course/`, {
+    method : "PUT",
+    body : JSON.stringify({course : id})
+  })
 }
