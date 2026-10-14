@@ -1,5 +1,5 @@
 
-import { AuthContext } from "@/components/context/AuthProvider";
+
 import HomePage from "@/components/ui/HomePage";
 
 
