@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-type authContextValue = {
+type AuthContextValue = {
   user : User,
   refreshUser : () => Promise<void>
 }
-const AuthContext = createContext<authContextValue | null>(null);
+const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function useUser() {
   const userContext = useContext(AuthContext);
@@ -24,7 +24,7 @@ export function useUser() {
 export function useRefreshUser() {
   const userContext = useContext(AuthContext);
   if (!userContext) {
-    throw new Error("useRefreshUserUser must be used inside <AuthProvider>");
+    throw new Error("useRefreshUser must be used inside <AuthProvider>");
   }
 
   return userContext.refreshUser;
