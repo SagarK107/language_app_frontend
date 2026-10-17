@@ -22,9 +22,30 @@ export type LessonSummary = {
 }
 
 export type CourseDetail = Course &  {
- 
+
   lessons : LessonSummary[]
 }
+
+export type ItemKind = "character" | "word" | "sentence";
+
+export type Item = {
+  id: number;
+  kind: ItemKind;
+  text: string;
+  transliteration: string;
+  meaning: string;
+  hint: string;
+  order: number;
+};
+
+export type LessonDetail = {
+  id: number;
+  course: number;
+  title: string;
+  order: number;
+  grammar_note: string;
+  items: Item[];
+};
 
 export type FieldErrors = Record<string, string[]>;
 
@@ -114,6 +135,12 @@ export function getCourse(id : number) {
   return apiFetch<CourseDetail>(`/api/courses/${id}/`, {
     method : "GET",
   })
+}
+
+export function getLesson(id: number) {
+  return apiFetch<LessonDetail>(`/api/lessons/${id}/`, {
+    method: "GET",
+  });
 }
 
 export function setActiveCourse(id : number) {
