@@ -149,3 +149,35 @@ export function setActiveCourse(id : number) {
     body : JSON.stringify({course : id})
   })
 }
+
+// One side of a question: `main` is the big label, `sub` an optional helper line.
+export type QuestionSide = {
+  main: string;
+  sub: string;
+};
+
+export type Question = {
+  // Signed by the backend. Holds the answer, so the UI only passes it back.
+  token: string;
+  type: string;
+  prompt: QuestionSide;
+  options: QuestionSide[];
+};
+
+export type AnswerResult = {
+  correct: boolean;
+  correct_choice: number;
+};
+
+export function getQuestions(lessonId: number) {
+  return apiFetch<Question[]>(`/api/lessons/${lessonId}/questions/`, {
+    method: "GET",
+  });
+}
+
+export function submitAnswer(lessonId: number, token: string, choice: number) {
+  return apiFetch<AnswerResult>(`/api/lessons/${lessonId}/answer/`, {
+    method: "POST",
+    body: JSON.stringify({ token, choice }),
+  });
+}
