@@ -156,10 +156,17 @@ export type QuestionSide = {
   sub: string;
 };
 
+// Must match the names in QUESTION_MAPPING in the backend's questions.py.
+export type QuestionType =
+  | "text_to_transliteration"
+  | "transliteration_to_text"
+  | "text_to_meaning"
+  | "meaning_to_text";
+
 export type Question = {
   // Signed by the backend. Holds the answer, so the UI only passes it back.
   token: string;
-  type: string;
+  type: QuestionType;
   prompt: QuestionSide;
   options: QuestionSide[];
 };
