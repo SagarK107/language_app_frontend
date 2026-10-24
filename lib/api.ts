@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8000";
+// Empty on purpose: requests go to "/api/..." on this same site, and
+// next.config.ts forwards them to Django.
+const API_URL = "";
 
 export type User = {
    
